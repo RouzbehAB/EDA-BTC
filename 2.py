@@ -18,7 +18,7 @@ wednesday = df["weekday"] == 3
 
 df_sunday = pd.merge(df, sunday, join="inner", on="Date")
 df_wednesday = pd.merge(df, wednesday, join="inner", on="Date")
-print(df)
+# print(df)
 
 
 
