@@ -2,22 +2,35 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
-import seaborn as sns
 
-btc = yf.download("BTC-USD", start="2015-01-01", end="2022-12-31")
-df = pd.DataFrame(btc)
+first_capital = 1000
+cap_counter = first_capital
 
-weekday = df.index.weekday
-df["weekday"] = weekday
+df = yf.download("BTC-USD", start="2015-01-01", end="2022-12-31")
+df["weekday"]= df.index.weekday
+
+sunday = df[df["weekday"] == 0]
+wednesday = df[df["weekday"] == 3]
+
+operation = pd.merge(sunday["Open"], wednesday["Close"], left_index=True, right_index=True, suffixes=["_buy", "_sell"] )
+
+for index, row in operation.iterrows():
+    buy_btc = cap_counter / row["Open_buy"]
+    cap_counter = buy_btc * row["Close_sell"]
+    profit = cap_counter - first_capital
+    print(f"Final capital: {cap_counter : 2f} $")
+
+    if profit > 0:
+        print("profitable")
+    else:
+        print("not profitable")
 
 
-sunday = df["weekday"] == 0
-wednesday = df["weekday"] == 3
 
 
-df_sunday = pd.merge(df, sunday, join="inner", on="Date")
-df_wednesday = pd.merge(df, wednesday, join="inner", on="Date")
+
+
+
 # print(df)
 
 
